@@ -11,10 +11,6 @@ public class Employee {
         this.designation = designation;
     }
 
-    public void promote() {
-        this.designation = this.designation.getNext();
-    }
-
     public int getId() {
         return id;
     }
@@ -36,8 +32,45 @@ public class Employee {
     }
 }
 
+interface Promotable {
+    void promote();
+}
+
+class InternalEmployee extends Employee implements Promotable{
+    public InternalEmployee(int id, String name, Designation designation) {
+        super(id, name, designation);
+    }
+
+    @Override
+    public void promote() {
+        this.setDesignation(this.getDesignation().getNext());
+    }
+}
+
+
+class ExternalEmployee extends Employee {
+    public ExternalEmployee(int id, String name, Designation designation) {
+        super(id, name, designation);
+    }
+}
+
+// class SpecialEmployee extends Employee implements Promotable
+
+class PromotionService {
+    public static void promote(Employee employee) {
+        if(!employee.getDesignation().equals(Designation.CONSULTANT))
+            employee.setDesignation(employee.getDesignation().getNext());
+        //else if(true)
+
+        //else if(true)
+        //else if(true)
+        //else
+
+    }
+}
+
 enum Designation {
-    SE("Software Engineer"), SSE("Senior Software Engineer"), CONSULTANT("Consultant");
+    SE("Software Engineer"), SSE("Senior Software Engineer"), CONSULTANT("Consultant"), SPECIAL("Special");
     private final String value;
 
     Designation(String value) {
