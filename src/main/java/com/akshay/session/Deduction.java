@@ -1,2 +1,4 @@
-package com.akshay.session;public class Deduction {
+package com.akshay.session;
+
+public class Deduction {
 }

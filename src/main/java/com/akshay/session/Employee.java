@@ -1,5 +1,7 @@
 package com.akshay.session;
 
+import java.util.Set;
+
 public class Employee {
     private final int id;
     private String name;
@@ -36,23 +38,91 @@ interface Promotable {
     void promote();
 }
 
-class InternalEmployee extends Employee implements Promotable{
-    public InternalEmployee(int id, String name, Designation designation) {
+interface SalaryPay {
+    double getMonthlyGrossedSalary();
+    double getMonthlyFixedSalary();
+}
+
+class InternalEmployee extends Employee implements Promotable {
+    SalaryPay salaryPay;
+    public InternalEmployee(int id, String name, Designation designation, SalaryPay salaryPay) {
         super(id, name, designation);
+        this.salaryPay = salaryPay;
     }
 
     @Override
     public void promote() {
         this.setDesignation(this.getDesignation().getNext());
     }
-}
 
-
-class ExternalEmployee extends Employee {
-    public ExternalEmployee(int id, String name, Designation designation) {
-        super(id, name, designation);
+    public double getSalary(){
+        return salaryPay.getMonthlyGrossedSalary();
     }
 }
+
+class ExternalEmployee extends Employee implements Promotable {
+    SalaryPay salaryPay;
+    public ExternalEmployee(int id, String name, Designation designation, SalaryPay salaryPay) {
+        super(id, name, designation);
+        this.salaryPay = salaryPay;
+    }
+
+    @Override
+    public void promote() {
+        this.setDesignation(this.getDesignation().getNext());
+    }
+
+    public double getSalary(){
+        return salaryPay.getMonthlyGrossedSalary();
+    }
+}
+
+interface Taxable {
+    double getTax(double amount);
+}
+
+class IndianTax implements Taxable {
+    Set<Deduction> deductions;
+    @Override
+    public double getTax(double amount) {
+        // deduciton
+        return 0;
+    }
+}
+class FixedSalaryPay implements SalaryPay {
+    double basePay;
+    Taxable taxable;
+
+    public FixedSalaryPay(double basePay, Taxable taxable) {
+        this.basePay = basePay;
+        this.taxable = taxable;
+    }
+
+    @Override
+    public double getMonthlyGrossedSalary() {
+        return basePay;
+    }
+
+    @Override
+    public double getMonthlyFixedSalary() {
+        double monthlyGrossedSalary = getMonthlyGrossedSalary();
+        return monthlyGrossedSalary -taxable.getTax(monthlyGrossedSalary);
+    }
+}
+
+class HourlySalaryPay implements SalaryPay {
+    double hourlyRate;
+    @Override
+    public double getMonthlyGrossedSalary() {
+        return 0;
+    }
+
+    @Override
+    public double getMonthlyFixedSalary() {
+        return 0;
+    }
+}
+
 
 // class SpecialEmployee extends Employee implements Promotable
 
